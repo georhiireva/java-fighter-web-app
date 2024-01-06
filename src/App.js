@@ -3,7 +3,7 @@ import ReactPaginate from 'react-paginate';
 import './App.css'; // Файл со стилями
 
 const topics = [
-    'Основы Java',
+    'Основы Java и не только',
     'Коллекции',
     'Потоки и параллелизм',
     'Объектно-ориентированное программирование',
