@@ -1,25 +1,73 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import './App.css'; // Файл со стилями
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const topics = [
+    'Основы Java',
+    'Коллекции',
+    'Потоки и параллелизм',
+    'Объектно-ориентированное программирование',
+    'Исключения и обработка ошибок',
+    'JVM и Garbage Collection',
+    'Паттерны проектирования',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+    'Работа с файлами в Java',
+];
+
+const App = () => {
+    const [currentPage, setCurrentPage] = useState(0);
+    const cardsPerPage = 9;
+
+    const handlePageClick = (data) => {
+        setCurrentPage(data.selected);
+    };
+
+    const indexOfLastCard = (currentPage + 1) * cardsPerPage;
+    const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+    const currentCards = topics.slice(indexOfFirstCard, indexOfLastCard);
+
+    return (
+        <div>
+            <div className="container">
+                {currentCards.map((topic, index) => (
+                    <div key={index} className="card">
+                        {/* Прямоугольная карточка с названием темы */}
+                        <div className="card-content">
+                            <h3>{topic}</h3>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <ReactPaginate
+                previousLabel={'←'}
+                nextLabel={'→'}
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={Math.ceil(topics.length / cardsPerPage)}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={handlePageClick}
+                containerClassName={'pagination'}
+                activeClassName={'active'}
+            />
+        </div>
+    );
+};
 
 export default App;
