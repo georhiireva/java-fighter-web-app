@@ -1,41 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './App.css'; // Файл со стилями
+import WebApp from '@twa-dev/sdk'
 
-const topics = [
-    'Основы Java и не только',
-    'Коллекции',
-    'Потоки и параллелизм',
-    'Объектно-ориентированное программирование',
-    'Исключения и обработка ошибок',
-    'JVM и Garbage Collection',
-    'Паттерны проектирования',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-    'Работа с файлами в Java',
-];
-
-const questions = {
-    'Основы Java и не только': ['Вопрос 1', 'Вопрос 2', 'Вопрос 3'],
-    'Коллекции': ['Вопрос 4', 'Вопрос 5', 'Вопрос 6'],
-    'Потоки и параллелизм': ['Вопрос 7', 'Вопрос 8', 'Вопрос 9'],
-    'Объектно-ориентированное программирование': ['Вопрос 10', 'Вопрос 11', 'Вопрос 12'],
-    // ... вопросы для других тем
-};
 
 const articles = {
     'Вопрос 1': 'Это пример текста статьи по первому вопросу.',
@@ -64,10 +30,19 @@ const App = () => {
         };
     }, []);
 
+    const [topics, setTopics] = useState([]);
     const [selectedTopic, setSelectedTopic] = useState(null);
     const [selectedQuestion, setSelectedQuestion] = useState(null);
+    const [topicQuestions, setTopicQuestions] = useState([]);
     const handleTopicClick = (topic) => {
         setSelectedTopic(topic);
+
+        fetch(`http://localhost:88/api/items/${topic.id}/articles`, {
+            method: 'GET'
+        }).then(response => response.json())
+            .then(data => {
+                setTopicQuestions(data)
+            })
     }
 
     const handleQuestionClick = (question) => {
@@ -78,6 +53,18 @@ const App = () => {
         setSelectedTopic(null);
     };
 
+    useEffect(() => {
+        // Запрос данных с сервера
+        fetch('http://localhost:88/api/items', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                setTopics(data);
+            })
+            .catch(error => console.error('Ошибка при получении данных:', error));
+    }, []);
+
     return (
         <div>
             <div className="container">
@@ -85,18 +72,18 @@ const App = () => {
                     // Если выбран вопрос, отобразить статью
                     <div className="article">
                         <button className="back-button" onClick={() => setSelectedQuestion(null)}>Назад</button>
-                        <h2>{selectedQuestion}</h2>
-                        <p>{articles[selectedQuestion]}</p>
+                        <h2>{selectedQuestion.name}</h2>
+                        <p>{selectedQuestion.body}</p>
                     </div>
                 ) : selectedTopic ? (
                     // Если выбрана тема, отобразить список вопросов
                     <div className="question-list">
                         <button className="back-button" onClick={() => setSelectedTopic(null)}>Назад к списку тем</button>
-                        <h2>{selectedTopic}</h2>
+                        <h2>{selectedTopic.name}</h2>
                         <ul>
-                            {questions[selectedTopic].map((question, index) => (
+                            {topicQuestions.map((question, index) => (
                                 <li key={index} onClick={() => handleQuestionClick(question)}>
-                                    {question}
+                                    {question.name}
                                 </li>
                             ))}
                         </ul>
@@ -106,11 +93,16 @@ const App = () => {
                     topics.map((topic, index) => (
                         <div key={index} className="card" onClick={() => handleTopicClick(topic)}>
                             <div className="card-content">
-                                <h3>{topic}</h3>
+                                <h3>{topic.name}</h3>
                             </div>
                         </div>
                     ))
                 )}
+            </div>
+            <div className="card">
+                <button onClick={() => WebApp.showAlert(`Hello World! Current count`)}>
+                    Show Alert
+                </button>
             </div>
         </div>
     );
